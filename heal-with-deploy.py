@@ -16,20 +16,21 @@ from langchain.prompts.chat import (
 )
 
 def main(build_output_file, base_url, api_key, deployment_name):
-
-    # Read build output
     with open(build_output_file, "r") as f:
         build_output = f.read()
+
+    # Process the build_output as needed
     print(build_output)
+
     text = build_output
 
-    # Create prompt template and run chain to return pathname of the error
     human_message_prompt = HumanMessagePromptTemplate(
         prompt=PromptTemplate(
             template="Can you find the filename where this error comes from: {error}?  If you do, please reply with the path to the file ONLY, if not please reply with no.",
             input_variables=["error"],
         )
     )
+
     chat_prompt_template = ChatPromptTemplate.from_messages([human_message_prompt])
     chat = AzureChatOpenAI(temperature=0, 
                            openai_api_base=base_url, 
@@ -46,11 +47,13 @@ def main(build_output_file, base_url, api_key, deployment_name):
     
     print("Filename found: " + filename)
 
-    # Read file contents
+    # Read file
     with open(filename, "r") as f:
         file_text = f.read()
 
-    # Create prompt response schema and template and run chain to return fixed code in json format
+    # Process the file_text as needed
+    # print(file_text)
+
     response_schemas = [
         ResponseSchema(name="fix_found", description="boolean true false value if the fix was found or not."),
         ResponseSchema(name="fixed_content", description="the updated contents containing the fix.")
@@ -75,10 +78,8 @@ def main(build_output_file, base_url, api_key, deployment_name):
                            openai_api_version="2023-03-15-preview")
     chain = LLMChain(llm=chat, prompt=chat_prompt_template)
     fixed_code = chain.run({'file':file_text, 'error': build_output});
-
     print(fixed_code)
 
-    # If parsing fails, try to fix the output and parse again
     try:
         parsed = output_parser.parse(fixed_code)
         print(parsed)
@@ -93,7 +94,7 @@ def main(build_output_file, base_url, api_key, deployment_name):
         return
     
     print("Fix found: " + parsed["fixed_content"])
-
+    
     # Write file
     with open(filename, "w") as f:
         f.write(parsed["fixed_content"])
