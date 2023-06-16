@@ -1,5 +1,4 @@
 // const app: Application = express()
-import express, { Application, Request, Response } from 'express';
 
 // const port: number = 3001
 const app: Application = express();
