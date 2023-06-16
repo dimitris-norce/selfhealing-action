@@ -22,8 +22,6 @@ def main(build_output_file, base_url, api_key, deployment_name):
     # Process the build_output as needed
     print(build_output)
 
-    text = build_output
-
     human_message_prompt = HumanMessagePromptTemplate(
         prompt=PromptTemplate(
             template="Can you find the filename where this error comes from: {error}?  If you do, please reply with the path to the file ONLY, if not please reply with no.",
