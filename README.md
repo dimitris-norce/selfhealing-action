@@ -12,7 +12,7 @@ The repository is a simple express typescript server with a github workflow acti
 
 ## How does it work?
 
-The workflow action is triggered when a push is made to the repository. The action runs the build script and if it fails, it triggers the healing process. The healing process runs an LLM chain to determine:
+The workflow action is triggered when a pull request is made to the repository. The action runs the build script and if it fails, it triggers the healing process. The healing process runs an LLM chain to determine:
 
 1. Where the error is
 2. What the error is
